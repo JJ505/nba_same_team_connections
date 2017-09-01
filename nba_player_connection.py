@@ -5,6 +5,8 @@ import igraph as ig
 import csv
 import random
 
+
+
 #for making an arbirtrary dictionary which will be a nested dict
 player_names = {}
 teams = defaultdict(dict)
@@ -12,10 +14,11 @@ player_count = 0
 with open('nba_season_data.csv') as nba_data:
     csv_reader = csv.reader(nba_data)
     for row in csv_reader:
-        #assigns names using the player_id
-        player_names[row[31]] = row[2]
-        #sort all data by team->year->playerids on that team year
-        teams[row[1]].setdefault(row[0],[]).append(row[31])
+        if row[1] == "NYK":
+            #assigns names using the player_id
+            player_names[row[31]] = row[2]
+            #sort all data by team->year->playerids on that team year
+            teams[row[1]].setdefault(row[0],[]).append(row[31])
 
 
 player_num = {}
@@ -26,13 +29,14 @@ for pid, _ in player_names.items():
 #set is used to remove duplicates
 edges = set()
 #for each element in teams, make edge connections between it and the remaining elements
-for _, year in teams.items():
+
+for name, year in teams.items():
     for _, playerIds in year.items():
         #create edges between each player
         for i in range (0, len(playerIds)-1):
             for j in range (i, len(playerIds)):
                 edges.add((player_num[playerIds[i]], player_num[playerIds[j]]))
-
+    #create each graph here
 #begin creating graph
 print ("Building graph.  This may take awhile...")
 G = ig.Graph(list(edges), directed = False)
@@ -90,7 +94,7 @@ axis=dict(showbackground=False,
           )
 
 layout = Layout(
-         title="Link network(3D visualization)",
+         title="New York Knicks network(3D visualization)",
          width=1000,
          height=1000,
          showlegend=False,
