@@ -14,11 +14,10 @@ player_count = 0
 with open('nba_season_data.csv') as nba_data:
     csv_reader = csv.reader(nba_data)
     for row in csv_reader:
-        if row[1] == "NYK":
-            #assigns names using the player_id
-            player_names[row[31]] = row[2]
-            #sort all data by team->year->playerids on that team year
-            teams[row[1]].setdefault(row[0],[]).append(row[31])
+        #assigns names using the player_id
+        player_names[row[31]] = row[2]
+        #sort all data by team->year->playerids on that team year
+        teams[row[1]].setdefault(row[0],[]).append(row[31])
 
 
 player_num = {}
@@ -94,7 +93,7 @@ axis=dict(showbackground=False,
           )
 
 layout = Layout(
-         title="New York Knicks network(3D visualization)",
+         title="All players network(3D visualization)",
          width=1000,
          height=1000,
          showlegend=False,
