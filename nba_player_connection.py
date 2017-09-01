@@ -3,18 +3,7 @@ from plotly.graph_objs import *
 from collections import defaultdict
 import igraph as ig
 import csv
-
-#make nodes for player if they dont exist (their player id is not in the dict)
-#several dicts containing
-
-#playernames[playerid] = player_name #used for labels
-#playerid can be used to identify the nodes and their edges
-#store playerid in list?
-#store dict for each team which uses a key year which accesses player ids
-#teams[name] = {year}
-#year[year_num] = [playerid]
-#make edges between player and teammates
-#connect between each node number
+import random
 
 #for making an arbirtrary dictionary which will be a nested dict
 player_names = {}
@@ -23,31 +12,29 @@ player_count = 0
 with open('nba_season_data.csv') as nba_data:
     csv_reader = csv.reader(nba_data)
     for row in csv_reader:
-        #do not include 2016 data since it doesnt have accurate team data
-        #create the labels
-        player_names[row[31]] = row[3]
+        #assigns names using the player_id
+        player_names[row[31]] = row[2]
         #sort all data by team->year->playerids on that team year
         teams[row[1]].setdefault(row[0],[]).append(row[31])
 
-
-        #print (row[31])
 
 player_num = {}
 for pid, _ in player_names.items():
     player_num[pid]=player_count
     player_count +=1
 
+#set is used to remove duplicates
 edges = set()
 #for each element in teams, make edge connections between it and the remaining elements
 for _, year in teams.items():
     for _, playerIds in year.items():
         #create edges between each player
-        #may have to elminate duplicates
         for i in range (0, len(playerIds)-1):
             for j in range (i, len(playerIds)):
                 edges.add((player_num[playerIds[i]], player_num[playerIds[j]]))
 
 #begin creating graph
+print ("Building graph.  This may take awhile...")
 G = ig.Graph(list(edges), directed = False)
 labels = []
 group =[]
@@ -56,7 +43,7 @@ for playerId, _ in player_names.items():
     #in the same order i created the player numbers, create the labels
     labels.append(player_names[playerId])
     #todo generate random group numbers
-    group.append(5)
+    group.append(random.random())
 
 layt = G.layout('kk', dim=3)
 
